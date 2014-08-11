@@ -2,6 +2,9 @@
 #define TIMER_H
 
 #include "SDL2/SDL.h"
+#if defined _WIN32 || defined __CYGWIN__
+    #undef main
+#endif
 
 
 class Timer

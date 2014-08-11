@@ -1,4 +1,9 @@
 #include <SDL2/SDL.h>
+
+#if defined _WIN32 || defined __CYGWIN__
+    #undef main
+#endif
+
 #include <iostream>
 #include "QuadTree.h"
 #include <stdlib.h>
@@ -8,6 +13,7 @@
 #include "Timer.h"
 #include <sstream>
 #include "CollisionEngine.h"
+#include <cmath>
 
 void checkbounds(Particle *particle);
 std::vector<Particle*> initialiseParticles();

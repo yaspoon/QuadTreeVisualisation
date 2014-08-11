@@ -2,6 +2,9 @@
 #define QUADTREE_H
 
 #include <SDL2/SDL.h>
+#if defined _WIN32 || defined __CYGWIN__
+    #undef main
+#endif
 #include <vector>
 #include <memory>
 #include <iostream>
