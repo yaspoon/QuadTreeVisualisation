@@ -46,7 +46,7 @@ class QuadTree
         SDL_Rect bounds;
         QuadTree *nodes[4];
         const int MAX_OBJECTS = 2;
-        const int MAX_LEVELS = 50;
+        const int MAX_LEVELS = 500;
 
         void split();
         int getIndex(Particle *particle);
