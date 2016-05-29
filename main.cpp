@@ -39,9 +39,9 @@ std::vector<Particle*> initialiseParticles();
 vec2 generateDirection();
 void cleanupObjects(std::vector<Particle*> objects);
 
-static const int SCREEN_WIDTH = 640;
-static const int SCREEN_HEIGHT = 480;
-static const int MAX_PARTICLES = 50;
+static const int SCREEN_WIDTH = 1366;
+static const int SCREEN_HEIGHT = 768;
+static const int MAX_PARTICLES = 1000;
 static const int PARTICLE_WIDTH = 10;
 static const int PARTICLE_HEIGHT = 10;
 static const int PARTICLE_SPEED = 50;
