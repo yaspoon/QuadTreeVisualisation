@@ -45,7 +45,9 @@ static const int MAX_PARTICLES = 1000;
 static const int PARTICLE_WIDTH = 10;
 static const int PARTICLE_HEIGHT = 10;
 static const int PARTICLE_SPEED = 50;
+static const int MAX_FRAMES = 50000;
 const std::string WINDOW_TITLE = "Quadtree Visualisation";
+const bool drawFrame = false;
 
 int main()
 {
@@ -79,7 +81,8 @@ int main()
 
                 CollisionEngine collisionEngine;
                 //Main loop
-                while(!quit)
+                //while(!quit)
+                for(int i = 0; i < MAX_FRAMES; i++)
                 {
                     //Get frame times
                     lastFrame = currentFrame;
@@ -140,16 +143,19 @@ int main()
                     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0); //Reset drawing color to clear screen
                     SDL_RenderClear(renderer); //Clear screen of last frame
 
-                    quadTree.draw(renderer); //Draw the quadtrees regions to the screen
-                    for(std::vector<Particle*>::iterator it = objects.begin(); it != objects.end(); ++it) //Draw each particle to the screen
+                    if(drawFrame)
                     {
-                        (*it)->draw(renderer);
+                            quadTree.draw(renderer); //Draw the quadtrees regions to the screen
+                            for(std::vector<Particle*>::iterator it = objects.begin(); it != objects.end(); ++it) //Draw each particle to the screen
+                            {
+                                (*it)->draw(renderer);
+                            }
+                            SDL_RenderPresent(renderer); //Copy the frame into gfx memory
                     }
-                    SDL_RenderPresent(renderer); //Copy the frame into gfx memory
                     //End Draw frame--------------------------------------------------------------------------------
 
                     //Frames per second calculation code----------------------------------------------------------
-                    Uint32 currentFrameTime = frameTimer.getTicks();
+                    /*Uint32 currentFrameTime = frameTimer.getTicks();
                     if(currentFrameTime > 1000) //1 second has past
                     {
                         std::ostringstream convert;
@@ -157,12 +163,16 @@ int main()
                         std::string newWindowTitle = WINDOW_TITLE;
                         newWindowTitle +=  " FPS:" + convert.str();
                         SDL_SetWindowTitle(mainWindow, newWindowTitle.c_str());
+
+                        std::cout << "FPS:" << frames << std::endl;
                         frames = 0;
                         frameTimer.start();
-                    }
+                    }*/
                     frames++; //Increment frame counter so we can figure out the FPS
                     //End frames per second-------------------------------------------------------------------------
                 }
+                float currentFrameTime = frameTimer.getTicks() / 1000.0f;
+                std::cout << "50000 frames in " << currentFrameTime << " seconds " << (float)frames / currentFrameTime << "FPS";
 
                 cleanupObjects(objects);
                 SDL_DestroyRenderer(renderer);
