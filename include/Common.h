@@ -20,6 +20,8 @@ along with QuadTreeTest.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <string>
+
 struct vec2
 {
     float x;
@@ -55,5 +57,14 @@ struct Projections
 {
     float projection[4];
 };
+
+static const int SCREEN_WIDTH = 1366;
+static const int SCREEN_HEIGHT = 768;
+static const int MAX_PARTICLES = 1000;
+static const int PARTICLE_WIDTH = 10;
+static const int PARTICLE_HEIGHT = 10;
+static const int PARTICLE_SPEED = 50;
+static const int MAX_FRAMES = 50000;
+const std::string WINDOW_TITLE = "Quadtree Visualisation";
 
 #endif // COMMON_H
