@@ -51,20 +51,20 @@ void QuadTree::clear()
     }
 }
 
-void QuadTree::insert(Particle *particle)
+void QuadTree::insert(float *position, int index)
 {
     if(nodes[0] != NULL)
     {
-        int index = getIndex(particle);
+        int index = getIndex(position);
 
         if(index != -1)
         {
-            nodes[index]->insert(particle);
+            nodes[index]->insert(position, index);
             return;
         }
     }
 
-    objects.push_back(particle);
+    objects.push_back(std::pair<int, std::pair<float, float> >(index, std::pair<float, float>(position[0], position[1])));
 
     if(objects.size() > MAX_OBJECTS && level < MAX_LEVELS)
     {
@@ -76,10 +76,14 @@ void QuadTree::insert(Particle *particle)
         int i = 0;
         while(i < objects.size())
         {
-            int index = getIndex(objects[i]);
+            std::pair<float, float> tmp = objects[i].second;
+            float object[2];
+            object[0] = tmp.first;
+            object[1] = tmp.second;
+            int index = getIndex(object);
             if(index != -1)
             {
-                nodes[index]->insert(objects[i]);
+                nodes[index]->insert(object, index);
                 objects.erase(objects.begin() + i);
             }
             else
@@ -96,7 +100,7 @@ void QuadTree::insert(Particle *particle)
 *which is what you would normally want. So removing the else will have the
 objects added on the way down
 */
-ParticleList QuadTree::retrieve(ParticleList objectList, Particle *particle)
+/*ParticleList QuadTree::retrieve(ParticleList objectList, Particle *particle)
 {
     int index = getIndex(particle);
     if(index != -1 && nodes[0] != NULL)
@@ -119,6 +123,7 @@ ParticleList QuadTree::retrieve(ParticleList objectList, Particle *particle)
 
     return objectList;
 }
+*/
 
 void QuadTree::draw(SDL_Renderer* renderer)
 {
@@ -161,10 +166,15 @@ void QuadTree::split()
 *if it can't fit exactly into any of the child nodes it returns -1
 *so it should stay in the parent
 */
-int QuadTree::getIndex(Particle *particle)
+int QuadTree::getIndex(float *position)
 {
     int index = -1;
-    Rect posDim = particle->getRect();
+    Rect posDim;
+    posDim.x = position[0];
+    posDim.y = position[1];
+    posDim.w = PARTICLE_WIDTH;
+    posDim.h = PARTICLE_HEIGHT;
+
     int verticalMidpoint = bounds.x + bounds.w / 2;
     int horizontalMidpoint = bounds.y + bounds.h / 2;
 
