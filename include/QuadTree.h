@@ -35,21 +35,21 @@ class QuadTree
         QuadTree(int level, SDL_Rect bounds);
         virtual ~QuadTree();
         void clear();
-        void insert(Particle *particle);
-        ParticleList retrieve(ParticleList objectList, Particle *particle);
+        void insert(float *position, int index);
+        //ParticleList retrieve(ParticleList objectList, Particle *particle);
         void draw(SDL_Renderer *renderer);
 
     protected:
     private:
         int level;
-        std::vector<Particle*> objects;
+        std::vector<std::pair<int, std::pair<float, float> > > objects;
         SDL_Rect bounds;
         QuadTree *nodes[4];
         const int MAX_OBJECTS = 2;
         const int MAX_LEVELS = 500;
 
         void split();
-        int getIndex(Particle *particle);
+        int getIndex(float *position);
 
         void drawRect(SDL_Renderer *renderer, SDL_Rect rect);
 };
