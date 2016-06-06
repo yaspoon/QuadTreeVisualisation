@@ -68,7 +68,7 @@ void Particle::update(float dt)
         rect.y += (dir.y * speed) * dt;
 }
 
-void Particle::draw(SDL_Renderer *renderer)
+/*void Particle::draw(SDL_Renderer *renderer)
 {
      SDL_SetRenderDrawColor(renderer, 0, 255, 255, 0);
 
@@ -78,7 +78,7 @@ void Particle::draw(SDL_Renderer *renderer)
     {
         std::cout << "Failed to draw rect" << std::endl;
     }
-}
+}*/
 
 /*
 Creates the vertices of the box in the order
