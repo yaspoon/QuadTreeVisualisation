@@ -30,7 +30,8 @@ class CollisionEngine
     public:
         CollisionEngine();
         virtual ~CollisionEngine();
-        void performCollisionDetection(Particle *particle, ParticleList colliders);
+        //void performCollisionDetection(Particle *particle, ParticleList colliders);
+        void performCollisionDetection(float *positions, std::vector<int> indexs);
     protected:
     private:
         CollisionResult testForCollision(Particle collider1, Particle collider2);
