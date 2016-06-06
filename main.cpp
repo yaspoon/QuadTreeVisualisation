@@ -36,17 +36,13 @@ along with QuadTreeTest.  If not, see <http://www.gnu.org/licenses/>.
 
 void checkbounds(Particle *particle);
 std::vector<Particle*> initialiseParticles();
+//void InitialiseParticleArrays(vec2 *pos, vec2 *dirs, float *speed);
+void InitialiseParticleArrays(float *pos, float *dirs);
+void checkboundsArray(float *positions, float *directions, const int MAX_PARTICLES, const int screen_width, const int screen_height);
 vec2 generateDirection();
 void cleanupObjects(std::vector<Particle*> objects);
+void drawRectangles(float *positions, SDL_Renderer *renderer);
 
-static const int SCREEN_WIDTH = 1366;
-static const int SCREEN_HEIGHT = 768;
-static const int MAX_PARTICLES = 1000;
-static const int PARTICLE_WIDTH = 10;
-static const int PARTICLE_HEIGHT = 10;
-static const int PARTICLE_SPEED = 50;
-static const int MAX_FRAMES = 50000;
-const std::string WINDOW_TITLE = "Quadtree Visualisation";
 const bool drawFrame = false;
 
 int main()
@@ -65,11 +61,13 @@ int main()
                 SDL_Rect bounds = {0,0,SCREEN_WIDTH, SCREEN_HEIGHT};
                 QuadTree quadTree(0, bounds);
 
-                std::vector<Particle*> objects;
+                //std::vector<Particle*> objects;
 
                 srand(time(NULL));
-
-                objects = initialiseParticles();
+                float positions[MAX_PARTICLES * 2];
+                float directions[MAX_PARTICLES * 2];
+                //objects = initialiseParticles();
+                InitialiseParticleArrays(positions, directions);
 
                 Timer gameTimer;
                 Timer frameTimer;
@@ -82,7 +80,7 @@ int main()
                 CollisionEngine collisionEngine;
                 //Main loop
                 //while(!quit)
-                for(int i = 0; i < MAX_FRAMES; i++)
+                for(int i = 0; i < MAX_FRAMES && !quit; i++)
                 {
                     //Get frame times
                     lastFrame = currentFrame;
@@ -104,29 +102,39 @@ int main()
 
                     //update each object---------------------------------------------------------------------------
                     float frameTime = (currentFrame - lastFrame) / 1000.0f;
-                    for(std::vector<Particle*>::iterator it = objects.begin(); it != objects.end(); ++it)
+                    /*for(std::vector<Particle*>::iterator it = objects.begin(); it != objects.end(); ++it)
                     {
                         (*it)->update(frameTime);
+                    }*/
+                    for(int i = 0; i < MAX_PARTICLES; i+=2)
+                    {
+                        positions[i] += directions[i] * frameTime;
+                        positions[i+1] += directions[i+1] * frameTime;
                     }
                     //End update-----------------------------------------------------------------------------------
 
                     //bounds checking------------------------------------------------------------------------------
-                    for(std::vector<Particle*>::iterator it = objects.begin(); it != objects.end(); ++it)
+                    /*for(std::vector<Particle*>::iterator it = objects.begin(); it != objects.end(); ++it)
                     {
                         checkbounds((*it));
-                    }
+                    }*/
+                    checkboundsArray(positions, directions, MAX_PARTICLES, SCREEN_WIDTH, SCREEN_HEIGHT);
                     //End bounds checking--------------------------------------------------------------------------
 
                     //Generate quadtree-----------------------------------------------------------------------------
                     quadTree.clear(); //Clear old quadtree partitioning
-                    for(std::vector<Particle*>::iterator it = objects.begin(); it != objects.end(); ++it) //For each particle add it to the quadtree
+                    /*for(std::vector<Particle*>::iterator it = objects.begin(); it != objects.end(); ++it) //For each particle add it to the quadtree
                     {
                         quadTree.insert(*it);
+                    }*/
+                    for(int i = 0; i < MAX_PARTICLES; i+=2)
+                    {
+                        quadTree.insert(&(positions[i]), i / 2); //We want the index to be the particle number
                     }
                     //End generate quadtree------------------------------------------------------------------------
 
                     //Collision handling-----------------------------------------------------------------------------
-                    ParticleList colliderList;
+                    /*ParticleList colliderList;
                     colliderList.particles = new Particle*[MAX_PARTICLES];
                     colliderList.count = 0;
                     colliderList.size = MAX_PARTICLES;
@@ -137,19 +145,24 @@ int main()
                         colliderList.count = 0;
                     }
                     delete[] colliderList.particles;
+                    */
+                    for(int i = 0; i < MAX_PARTICLES; i+=2)
+                    {
+
+                    }
                     //End Collision handling------------------------------------------------------------------------
 
                     //Draw frame------------------------------------------------------------------------------------
-                    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0); //Reset drawing color to clear screen
-                    SDL_RenderClear(renderer); //Clear screen of last frame
-
                     if(drawFrame)
                     {
+                            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 0); //Reset drawing color to clear screen
+                            SDL_RenderClear(renderer); //Clear screen of last frame
                             quadTree.draw(renderer); //Draw the quadtrees regions to the screen
-                            for(std::vector<Particle*>::iterator it = objects.begin(); it != objects.end(); ++it) //Draw each particle to the screen
+                            /*for(std::vector<Particle*>::iterator it = objects.begin(); it != objects.end(); ++it) //Draw each particle to the screen
                             {
                                 (*it)->draw(renderer);
-                            }
+                            }*/
+                            drawRectangles(positions, renderer);
                             SDL_RenderPresent(renderer); //Copy the frame into gfx memory
                     }
                     //End Draw frame--------------------------------------------------------------------------------
@@ -174,7 +187,7 @@ int main()
                 float currentFrameTime = frameTimer.getTicks() / 1000.0f;
                 std::cout << "50000 frames in " << currentFrameTime << " seconds " << (float)frames / currentFrameTime << "FPS";
 
-                cleanupObjects(objects);
+                //cleanupObjects(objects);
                 SDL_DestroyRenderer(renderer);
             }
             else
@@ -194,6 +207,21 @@ int main()
         std::cout << "ERROR:Failed to initialise sdl SDL_Error:" << SDL_GetError() << std::endl;
     }
     return 0;
+}
+
+void drawRectangles(float *positions, SDL_Renderer *renderer)
+{
+    SDL_SetRenderDrawColor(renderer, 0, 255, 255, 0);
+
+    for(int i = 0; i < MAX_PARTICLES; i+=2)
+    {
+        SDL_Rect tmp = {(int)positions[i], (int)positions[i+1], PARTICLE_WIDTH, PARTICLE_HEIGHT};
+
+        if(SDL_RenderFillRect(renderer, &tmp) != 0)
+        {
+            std::cout << "Failed to draw rect" << std::endl;
+        }
+    }
 }
 
 /*
@@ -309,5 +337,67 @@ void cleanupObjects(std::vector<Particle*> objects)
     for(std::vector<Particle*>::iterator it = objects.begin(); it != objects.end(); ++it)
     {
         delete *it;
+    }
+}
+
+//void InitialiseParticleArrays(vec2 *pos, vec2 *dirs, float *speed)
+void InitialiseParticleArrays(float *pos, float *dirs)
+{
+    for(int i = 0; i < MAX_PARTICLES; i+=2)
+    {
+        //Randomly generate the start point of the particle
+        pos[i] = rand() % SCREEN_WIDTH; //x
+        pos[i+1] = rand() % SCREEN_HEIGHT; //y
+
+        vec2 dir = generateDirection(); //Generate the direction it's traveling in initialy
+
+        dirs[i] = dir.x * PARTICLE_SPEED;
+        dirs[i+1] = dir.y * PARTICLE_SPEED;
+
+    }
+}
+
+void checkboundsArray(float *positions, float *directions, const int num_particles, const int screen_width, const int screen_height)
+{
+    for(int i = 0; i < num_particles; i+=2)
+    {
+        Rect rect;
+        vec2 dir;
+
+        rect.x = positions[i];
+        rect.y = positions[i+1];
+        rect.w = PARTICLE_WIDTH;
+        rect.h = PARTICLE_HEIGHT;
+
+        dir.x = directions[i];
+        dir.y = directions[i+1];
+
+        if(rect.x < 0) //If the particle went out the left side
+        {
+            rect.x = 0;
+            dir.x = -dir.x; //Send it in the opposite direction
+        }
+        else if(rect.x + rect.w > SCREEN_WIDTH) //If the particle went out the right side
+        {
+            rect.x = SCREEN_WIDTH - rect.w;
+            dir.x = -dir.x;
+        }
+        else if(rect.y < 0) //If the particle went out the top
+        {
+            rect.y = 0;
+            dir.y = -dir.y;
+        }
+        else if(rect.y +  rect.h > SCREEN_HEIGHT) //If the particle went out the bottom
+        {
+            rect.y = SCREEN_HEIGHT - rect.h;
+            dir.y = -dir.y;
+        }
+
+        positions[i] = rect.x;
+        positions[i+1] = rect.y;
+
+        directions[i] = dir.x;
+        directions[i+1] = dir.y;
+
     }
 }
