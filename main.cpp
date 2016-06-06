@@ -82,7 +82,7 @@ int main()
                 CollisionEngine collisionEngine;
                 //Main loop
                 //while(!quit)
-                for(int i = 0; i < MAX_FRAMES; i++)
+                for(int i = 0; i < MAX_FRAMES && !quit; i++)
                 {
                     //Get frame times
                     lastFrame = currentFrame;
