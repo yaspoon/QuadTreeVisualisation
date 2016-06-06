@@ -64,7 +64,7 @@ class Particle
 
 struct ParticleList
 {
-    Particle **particles;
+    std::pair<float, float> **particles;
     Uint32 count;
     Uint32 size;
 };
