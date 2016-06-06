@@ -126,7 +126,7 @@ int main()
                     //End generate quadtree------------------------------------------------------------------------
 
                     //Collision handling-----------------------------------------------------------------------------
-                    ParticleList colliderList;
+                    /*ParticleList colliderList;
                     colliderList.particles = new Particle*[MAX_PARTICLES];
                     colliderList.count = 0;
                     colliderList.size = MAX_PARTICLES;
@@ -136,7 +136,7 @@ int main()
                         collisionEngine.performCollisionDetection(*it, colliderList);
                         colliderList.count = 0;
                     }
-                    delete[] colliderList.particles;
+                    delete[] colliderList.particles;*/
                     //End Collision handling------------------------------------------------------------------------
 
                     //Draw frame------------------------------------------------------------------------------------
