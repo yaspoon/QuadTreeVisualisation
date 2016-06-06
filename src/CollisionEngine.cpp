@@ -30,7 +30,7 @@ CollisionEngine::~CollisionEngine()
     //dtor
 }
 
-void CollisionEngine::performCollisionDetection(Particle *particle, ParticleList colliders)
+/*void CollisionEngine::performCollisionDetection(Particle *particle, ParticleList colliders)
 {
     for(int i = 0; i < colliders.count; i++)
     {
@@ -102,6 +102,11 @@ void CollisionEngine::performCollisionDetection(Particle *particle, ParticleList
             }
         }
     }
+}*/
+
+void CollisionEngine::performCollisionDetection(float *positions, std::vector<int> indexs)
+{
+
 }
 
 CollisionResult CollisionEngine::testForCollision(Particle collider1, Particle collider2)
